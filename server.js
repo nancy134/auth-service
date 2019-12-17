@@ -17,20 +17,36 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
   res.send('Hello world\n');
 });
-
+app.post('/signUp', function(req, res) {
+    var username = req.body.username;
+    var password = req.body.password;
+    var signUpPromise = cognito.signUp(username, password);
+    signUpPromise.then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        res.status(err.statusCode).send(err);
+    });
+});
 app.post('/initiateAuth', function(req, res){
   var username = req.body.username;
   var password = req.body.password;
-    var initiateAuthResults;
     var initiateAuthPromise = cognito.initiateAuth(username, password);
     initiateAuthPromise.then(function(result) {
-        initiateAuthResults = result;
-        // Use user details from here
-        console.log("result.AuthenticationResult.ExpiresIn: "+result.AuthenticationResult.ExpiresIn);
-        res.send({status: "ok"});
-    }, function(err) {
-        console.log(err);
+        res.send(result.AuthenticationResult);
+    }).catch(function(err) {
+        res.status(err.statusCode).send(err);
     })
+});
+
+app.post('/confirmSignUp', function(req,res){
+    var username = req.body.username;
+    var code = req.body.code;
+    var confirmSignUpPromise = cognito.confirmSignUp(username, code);
+    confirmSignUpPromise.then(function(result) {
+        res.send(result);
+    }).catch(function(err) {
+        res.status(err.statusCode).send(err);
+    });
 });
 
 app.listen(PORT, HOST);
