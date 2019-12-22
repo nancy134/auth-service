@@ -3,6 +3,7 @@
 const express = require('express');
 const cognito = require('./cognito');
 const bodyParser = require('body-parser');
+const rabbitmq = require('./rabbitmq');
 
 // Constants
 const PORT = 8080;
@@ -44,6 +45,7 @@ app.post('/confirmSignUp', function(req,res){
     var confirmSignUpPromise = cognito.confirmSignUp(username, code);
     confirmSignUpPromise.then(function(result) {
         res.send(result);
+        rabbitmq.emit(username);
     }).catch(function(err) {
         res.status(err.statusCode).send(err);
     });
