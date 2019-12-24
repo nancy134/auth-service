@@ -21,7 +21,8 @@ app.get('/', (req, res) => {
 app.post('/signUp', function(req, res) {
     var username = req.body.username;
     var password = req.body.password;
-    var signUpPromise = cognito.signUp(username, password);
+    var cognitoClientId = req.body.cognitoClientId;
+    var signUpPromise = cognito.signUp(username, password,cognitoClientId);
     signUpPromise.then(function(result){
         res.send(result);
     }).catch(function(err){
@@ -31,7 +32,8 @@ app.post('/signUp', function(req, res) {
 app.post('/initiateAuth', function(req, res){
   var username = req.body.username;
   var password = req.body.password;
-    var initiateAuthPromise = cognito.initiateAuth(username, password);
+  var cognitoClientId = req.body.cognitoClientId;
+    var initiateAuthPromise = cognito.initiateAuth(username, password, cognitoClientId);
     initiateAuthPromise.then(function(result) {
         res.send(result.AuthenticationResult);
     }).catch(function(err) {
@@ -42,10 +44,38 @@ app.post('/initiateAuth', function(req, res){
 app.post('/confirmSignUp', function(req,res){
     var username = req.body.username;
     var code = req.body.code;
-    var confirmSignUpPromise = cognito.confirmSignUp(username, code);
+    var cognitoClientId = req.body.cognitoClientId;
+    var confirmSignUpPromise = cognito.confirmSignUp(username, code, cognitoClientId);
     confirmSignUpPromise.then(function(result) {
         res.send(result);
         rabbitmq.emit(username);
+    }).catch(function(err) {
+        res.status(err.statusCode).send(err);
+    });
+});
+
+app.get('/listUserPools', function(req, res){
+    var listUserPoolsPromise = cognito.listUserPools();
+    listUserPoolsPromise.then(function(result){
+        res.send(result);
+    }).catch(function(err) {
+        res.status(err.statusCode).send(err);
+    });
+});
+
+app.get('/describeUserPool', function(req, res){
+    var describeUserPoolPromise = cognito.describeUserPool(req.query.userPoolId);
+    describeUserPoolPromise.then(function(result){
+        res.send(result);
+    }).catch(function(err) {
+        res.status(err.statusCode).send(err);
+    });
+});
+
+app.get('/listUserPoolClients', function(req, res){
+    var listUserPoolClientsPromise = cognito.listUserPoolClients(req.query.userPoolId);
+    listUserPoolClientsPromise.then(function(result){
+        res.send(result);
     }).catch(function(err) {
         res.status(err.statusCode).send(err);
     });

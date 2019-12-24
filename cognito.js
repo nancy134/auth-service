@@ -10,23 +10,23 @@ function getCognitoIdentityServiceProvider() {
 
 
 }
-exports.signUp = function (username, password) {
+exports.signUp = function (username, password, cognitoClientId) {
     var cognitoIdentityServiceProvider = getCognitoIdentityServiceProvider();
 
     params = {
-        ClientId: process.env.COGNITO_CLIENT_ID,
+        ClientId: cognitoClientId, 
         Password: password,
         Username: username
     };
 
     return cognitoIdentityServiceProvider.signUp(params).promise();
 }
-exports.initiateAuth = function (username, password) {
+exports.initiateAuth = function (username, password, cognitoClientId) {
     var cognitoIdentityServiceProvider = getCognitoIdentityServiceProvider(); 
 
     params = {
         AuthFlow: "USER_PASSWORD_AUTH",
-        ClientId: process.env.COGNITO_CLIENT_ID,
+        ClientId: cognitoClientId,
         AuthParameters: {
             "USERNAME" : username,
             "PASSWORD" : password
@@ -35,15 +35,45 @@ exports.initiateAuth = function (username, password) {
     
     return cognitoIdentityServiceProvider.initiateAuth(params).promise();
 }
-exports.confirmSignUp = function(username, code){
+exports.confirmSignUp = function(username, code, cognitoClientId){
     var cognitoIdentityServiceProvider = getCognitoIdentityServiceProvider();
 
     params = {
-      ClientId: process.env.COGNITO_CLIENT_ID,
+      ClientId: cognitoClientId,
       ConfirmationCode: code,
       Username: username
     };
 
     return cognitoIdentityServiceProvider.confirmSignUp(params).promise(); 
+}
+
+exports.listUserPools = function(){
+    var cognitoIdentityServiceProvider = getCognitoIdentityServiceProvider();
+
+    params = {
+        MaxResults: '25'
+    };
+
+    return cognitoIdentityServiceProvider.listUserPools(params).promise();
+}
+
+exports.describeUserPool = function(userPoolId){
+    var cognitoIdentityServiceProvider = getCognitoIdentityServiceProvider();
+
+    params = {
+        UserPoolId: userPoolId
+    };
+
+    return cognitoIdentityServiceProvider.describeUserPool(params).promise();
+}
+
+exports.listUserPoolClients = function(userPoolId){
+     var cognitoIdentityServiceProvider = getCognitoIdentityServiceProvider();
+
+     params = {
+         UserPoolId: userPoolId
+     }
+
+     return cognitoIdentityServiceProvider.listUserPoolClients(params).promise();
 }
 
