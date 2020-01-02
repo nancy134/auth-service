@@ -4,6 +4,7 @@ const express = require('express');
 const cognito = require('./cognito');
 const bodyParser = require('body-parser');
 const rabbitmq = require('./rabbitmq');
+const tesla = require('./tesla');
 
 // Constants
 const PORT = 8080;
@@ -81,4 +82,14 @@ app.get('/listUserPoolClients', function(req, res){
     });
 });
 
+app.post('/teslaAuth', function(req, res){
+    var email = req.body.email;
+    var password = req.body.password;
+    var teslaAuthPromise = tesla.initiateAuth(email,password);
+    teslaAuthPromise.then(function(result){
+       res.send(result);
+    }).catch(function(err){
+        res.send(err);
+    });
+});
 app.listen(PORT, HOST);
