@@ -49,7 +49,7 @@ app.post('/confirmSignUp', function(req,res){
     var confirmSignUpPromise = cognito.confirmSignUp(username, code, cognitoClientId);
     confirmSignUpPromise.then(function(result) {
         res.send(result);
-        rabbitmq.emit(username);
+        //rabbitmq.emit(username);
     }).catch(function(err) {
         res.status(err.statusCode).send(err);
     });
