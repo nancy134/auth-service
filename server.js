@@ -5,6 +5,7 @@ const cognito = require('./cognito');
 const bodyParser = require('body-parser');
 const rabbitmq = require('./rabbitmq');
 const tesla = require('./tesla');
+const vex = require('./vex');
 
 // Constants
 const PORT = 8080;
@@ -92,4 +93,20 @@ app.post('/teslaAuth', function(req, res){
         res.send(err);
     });
 });
+
+app.post('/vexAuth', function(req, res){
+    var body = {
+        user: {
+            email: req.body.email,
+            password: req.body.password
+        }
+    };
+    var signinPromise = vex.signin(body);
+    signinPromise.then(function(result){
+        res.json(result); 
+    }).catch(function(err){
+        res.status(400).json(err);
+    });
+});
+
 app.listen(PORT, HOST);
