@@ -9,10 +9,8 @@ var signin = function(body){
             body: body
         };
         rp(options).then(function(resp){
-            console.log("resp: "+JSON.stringify(resp));
             resolve(resp);
         }).catch(function(err){
-            console.log("err: "+JSON.stringify(err));
             reject(err);
         });
     });

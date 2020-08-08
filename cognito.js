@@ -77,3 +77,41 @@ exports.listUserPoolClients = function(userPoolId){
      return cognitoIdentityServiceProvider.listUserPoolClients(params).promise();
 }
 
+adminDeleteUser = function(params){
+    var cognitoIdentifyServiceProvider = getCognitoIdentityServiceProvider();
+    return cognitoIdentifyServiceProvider.adminDeleteUser(params).promise();
+}
+
+listUsers = function(params){
+    var cognitoIdentifyServiceProvider = getCognitoIdentityServiceProvider();
+
+    return cognitoIdentifyServiceProvider.listUsers(params).promise();
+}
+
+exports.deleteUser = function(userPoolId, email){
+    return new Promise(function(resolve, reject){
+        var params = {
+            UserPoolId: userPoolId,
+            AttributesToGet: ['email'],
+            Filter: "email = \""+email+"\""
+        };
+        listUsers(params).then(function(result){
+            if (result.Users.length > 0){
+                params = {
+                    UserPoolId: userPoolId,
+                    Username: result.Users[0].Username
+                };
+                adminDeleteUser(params).then(function(result){
+                    resolve(result);
+                }).catch(function(err){
+                    reject(err);
+                });
+            } else {
+                resolve(result);
+            }
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+

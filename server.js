@@ -17,6 +17,34 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
+Object.prototype.getName = function() { 
+   var funcNameRegex = /function (.{1,})\(/;
+   var results = (funcNameRegex).exec((this).constructor.toString());
+   return (results && results.length > 1) ? results[1] : "";
+};
+
+function formatError(err){
+    var ret = {};
+
+    // If cognito error
+    if (err.getName() === "Error"){
+        if (err.message) ret.message = err.message;
+        else ret.message = "Unknown error";
+
+        if (err.statusCode) ret.statusCode = err.statusCode;
+        else ret.statusCode = 400;
+
+        ret.originalMessage = err;
+    } else {
+        ret.message = "Unknown error";
+        ret.statusCode = 400;
+        ret.originalMessage = err;
+    }
+
+    ret.service = "AuthService";
+    return(ret);
+}
+
 app.get('/', (req, res) => {
   res.send('Hello world\n');
 });
@@ -28,7 +56,8 @@ app.post('/signUp', function(req, res) {
     signUpPromise.then(function(result){
         res.send(result);
     }).catch(function(err){
-        res.status(err.statusCode).send(err);
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
     });
 });
 app.post('/initiateAuth', function(req, res){
@@ -39,7 +68,8 @@ app.post('/initiateAuth', function(req, res){
     initiateAuthPromise.then(function(result) {
         res.send(result.AuthenticationResult);
     }).catch(function(err) {
-        res.status(err.statusCode).send(err);
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
     })
 });
 
@@ -52,7 +82,8 @@ app.post('/confirmSignUp', function(req,res){
         res.send(result);
         //rabbitmq.emit(username);
     }).catch(function(err) {
-        res.status(err.statusCode).send(err);
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
     });
 });
 
@@ -61,7 +92,8 @@ app.get('/listUserPools', function(req, res){
     listUserPoolsPromise.then(function(result){
         res.send(result);
     }).catch(function(err) {
-        res.status(err.statusCode).send(err);
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
     });
 });
 
@@ -70,7 +102,8 @@ app.get('/describeUserPool', function(req, res){
     describeUserPoolPromise.then(function(result){
         res.send(result);
     }).catch(function(err) {
-        res.status(err.statusCode).send(err);
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
     });
 });
 
@@ -79,7 +112,43 @@ app.get('/listUserPoolClients', function(req, res){
     listUserPoolClientsPromise.then(function(result){
         res.send(result);
     }).catch(function(err) {
-        res.status(err.statusCode).send(err);
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
+    });
+});
+
+app.post('/adminDeleteUser', (req, res) => {
+    var adminDeleteUserPromise = cognito.adminDeleteUser(req.body);
+    adminDeleteUserPromise.then(function(result){
+        res.json(result);
+    }).catch(function(err){
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
+    });
+});
+
+app.get('/listUsers', (req, res) => {
+    var params = {
+        UserPoolId: req.query.userPoolId,
+        AttributesToGet: ['email'],
+        Filter: "email = \""+req.query.email+"\""
+    };
+    var listUsersPromise = cognito.listUsers(params);
+    listUsersPromise.then(function(result){
+        res.json(result);
+    }).catch(function(err){
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
+    });
+});
+
+app.get('/deleteUser', (req, res) => {
+    var deleteUserPromise = cognito.deleteUser(req.query.userPoolId, req.query.email);
+    deleteUserPromise.then(function(result){
+        res.json(result);
+    }).catch(function(err){
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
     });
 });
 
