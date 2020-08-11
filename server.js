@@ -87,6 +87,32 @@ app.post('/confirmSignUp', function(req,res){
     });
 });
 
+app.post('/forgotPassword', function(req, res){
+    var username = req.body.username;
+    var cognitoClientId = req.body.cognitoClientId;
+    var forgotPasswordPromise = cognito.forgotPassword(username, cognitoClientId);
+    forgotPasswordPromise.then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
+    });
+});
+
+app.post('/confirmForgotPassword', function(req, res){
+    var code = req.body.code;
+    var password = req.body.password;
+    var username = req.body.username;
+    var cognitoClientId = req.body.cognitoClientId;
+    var forgotPasswordConfirmPromise = cognito.confirmForgotPassword(code, password, username, cognitoClientId);
+    forgotPasswordConfirmPromise.then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
+    });
+});
+
 app.get('/listUserPools', function(req, res){
     var listUserPoolsPromise = cognito.listUserPools();
     listUserPoolsPromise.then(function(result){
