@@ -3,9 +3,9 @@
 const express = require('express');
 const cognito = require('./cognito');
 const bodyParser = require('body-parser');
-const rabbitmq = require('./rabbitmq');
 const tesla = require('./tesla');
 const vex = require('./vex');
+const sns = require('./sns');
 
 // Constants
 const PORT = 8080;
@@ -80,7 +80,6 @@ app.post('/confirmSignUp', function(req,res){
     var confirmSignUpPromise = cognito.confirmSignUp(username, code, cognitoClientId);
     confirmSignUpPromise.then(function(result) {
         res.send(result);
-        //rabbitmq.emit(username);
     }).catch(function(err) {
         var formattedError = formatError(err);
         res.status(formattedError.statusCode).send(formattedError);
@@ -177,6 +176,18 @@ app.get('/deleteUser', (req, res) => {
         res.status(formattedError.statusCode).send(formattedError);
     });
 });
+
+app.get('/listTopics', (req, res) => {
+    sns.listTopics();
+    res.json("ok");
+});
+
+app.post('/publishMessage', (req, res) => {
+    sns.publishMessage(req.body.arn, req.body.message);
+    res.json("ok");
+});
+
+
 
 app.post('/teslaAuth', function(req, res){
     var email = req.body.email;
