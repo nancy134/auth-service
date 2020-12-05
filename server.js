@@ -46,7 +46,7 @@ function formatError(err){
 }
 
 app.get('/', (req, res) => {
-  res.send('Hello world\n');
+  res.send('auth-service');
 });
 app.post('/signUp', function(req, res) {
     var username = req.body.username;
@@ -54,7 +54,16 @@ app.post('/signUp', function(req, res) {
     var cognitoClientId = req.body.cognitoClientId;
     var signUpPromise = cognito.signUp(username, password,cognitoClientId);
     signUpPromise.then(function(result){
-        res.send(result);
+        var userData = {
+            email: req.body.username,
+            userSub: result.UserSub
+        };
+        sns.newUserEvent(userData).then(function(snsResult){
+            res.send(result);
+        }).catch(function(err){
+            var formattedError = formatError(err);
+            res.status(formattedError.statusCode).send(formattedError);
+        });
     }).catch(function(err){
         var formattedError = formatError(err);
         res.status(formattedError.statusCode).send(formattedError);
@@ -167,6 +176,32 @@ app.get('/listUsers', (req, res) => {
     });
 });
 
+app.get('/playUsers', (req, res) => {
+    var params = {
+        UserPoolId: req.query.userPoolId
+    };
+    cognito.listUsers(params).then(function(result){
+        res.send('ok');
+        var promiseArray = [];
+        for (var i=0; i<result.Users.length; i++){
+            var userData = {
+                email: result.Users[i].Attributes[2].Value,
+                userSub: result.Users[i].Attributes[0].Value 
+            };
+            console.log(userData);
+            var newUserPromise = sns.newUserEvent(userData);
+            promiseArray.push(newUserPromise);
+        }
+        Promise.all(promiseArray).then((values) => {
+            console.log(values);
+        }).catch(function(err){
+            console.log(err);
+        });
+    }).catch(function(err){
+        res.send(err)
+    });
+});
+
 app.get('/deleteUser', (req, res) => {
     var deleteUserPromise = cognito.deleteUser(req.query.userPoolId, req.query.email);
     deleteUserPromise.then(function(result){
@@ -183,8 +218,11 @@ app.get('/listTopics', (req, res) => {
 });
 
 app.post('/publishMessage', (req, res) => {
-    sns.publishMessage(req.body.arn, req.body.message);
-    res.json("ok");
+    sns.publishMessage(req.body.arn, req.body.message).then(function(result){
+        res.json(result);
+    }).catch(function(err){
+        res.json(err);
+    });
 });
 
 

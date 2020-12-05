@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const newUserTopicARN = "arn:aws:sns:us-east-1:461318555119:new-user";
 
 exports.listTopics = function(){
 
@@ -13,6 +14,22 @@ exports.listTopics = function(){
     });
 }
 
+exports.newUserEvent = function(userData){
+    return new Promise(function(resolve, reject){
+        var params = {
+            Message: JSON.stringify(userData),
+            TopicArn: newUserTopicARN
+        };
+        console.log(params);
+        var publishPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
+        publishPromise.then(function(data){
+            resolve(data);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+}
+
 exports.publishMessage = function(topicARN, message){
     // Create publish parameters
     var params = {
@@ -23,12 +40,12 @@ exports.publishMessage = function(topicARN, message){
     // Create promise and SNS service object
     var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
 
-    // Handle promise's fulfilled/rejected states
-    publishTextPromise.then(function(data) {
-        console.log(`Message ${params.Message} send sent to the topic ${params.TopicArn}`);
-        console.log("MessageID is " + data.MessageId);
-    }).catch(function(err) {
-        console.error(err, err.stack);
+    return new Promise(function(resolve, reject){
+        publishTextPromise.then(function(data) {
+            resolve(data);
+        }).catch(function(err) {
+            reject(err);
+        });
     });
 }
 

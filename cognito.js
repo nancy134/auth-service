@@ -102,7 +102,7 @@ adminDeleteUser = function(params){
     return cognitoIdentifyServiceProvider.adminDeleteUser(params).promise();
 }
 
-listUsers = function(params){
+exports.listUsers = function(params){
     var cognitoIdentifyServiceProvider = getCognitoIdentityServiceProvider();
 
     return cognitoIdentifyServiceProvider.listUsers(params).promise();
