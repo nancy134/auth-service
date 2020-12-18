@@ -82,6 +82,17 @@ app.post('/initiateAuth', function(req, res){
     })
 });
 
+app.post('/refreshToken', function(req, res){
+    var refreshToken = req.body.refreshToken;
+    var cognitoClientId = req.body.cognitoClientId;
+    cognito.refreshToken(refreshToken, cognitoClientId).then(function(result){
+        res.send(result.AuthenticationResult);
+    }).catch(function(err){
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
+    });
+});
+
 app.post('/confirmSignUp', function(req,res){
     var username = req.body.username;
     var code = req.body.code;

@@ -35,6 +35,20 @@ exports.initiateAuth = function (username, password, cognitoClientId) {
     
     return cognitoIdentityServiceProvider.initiateAuth(params).promise();
 }
+
+exports.refreshToken = function(refreshToken, cognitoClientId){
+    var cognitoIdentityServiceProvider = getCognitoIdentityServiceProvider();
+
+    var params = {
+        AuthFlow: "REFRESH_TOKEN_AUTH",
+        ClientId: cognitoClientId,
+        AuthParameters: {
+            "REFRESH_TOKEN": refreshToken
+        }
+    };
+    return cognitoIdentityServiceProvider.initiateAuth(params).promise();
+}
+
 exports.confirmSignUp = function(username, code, cognitoClientId){
     var cognitoIdentityServiceProvider = getCognitoIdentityServiceProvider();
 
