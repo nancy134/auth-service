@@ -111,7 +111,7 @@ exports.listUserPoolClients = function(userPoolId){
      return cognitoIdentityServiceProvider.listUserPoolClients(params).promise();
 }
 
-adminDeleteUser = function(params){
+exports.adminDeleteUser = function(params){
     var cognitoIdentifyServiceProvider = getCognitoIdentityServiceProvider();
     return cognitoIdentifyServiceProvider.adminDeleteUser(params).promise();
 }
@@ -129,13 +129,13 @@ exports.deleteUser = function(userPoolId, email){
             AttributesToGet: ['email'],
             Filter: "email = \""+email+"\""
         };
-        listUsers(params).then(function(result){
+        module.exports.listUsers(params).then(function(result){
             if (result.Users.length > 0){
                 params = {
                     UserPoolId: userPoolId,
                     Username: result.Users[0].Username
                 };
-                adminDeleteUser(params).then(function(result){
+                module.exports.adminDeleteUser(params).then(function(result){
                     resolve(result);
                 }).catch(function(err){
                     reject(err);

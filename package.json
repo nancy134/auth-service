@@ -1,11 +1,13 @@
 {
   "name": "auth-service",
   "version": "1.0.0",
+  "private": true,
   "description": "auth-service",
   "author": "Nancy Piedra <nancy_piedra@yahoo.com>",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "NODE_ENV=test mocha ./test/* --exit"
   },
   "dependencies": {
     "aws-sdk": "^2.799.0",
@@ -13,5 +15,9 @@
     "express": "^4.17.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.5"
+  },
+  "devDependencies": {
+    "aws-sdk-mock": "^5.1.0",
+    "mocha": "^8.2.1"
   }
 }
