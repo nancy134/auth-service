@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const newUserTopicARN = "arn:aws:sns:us-east-1:461318555119:new-user";
+const newUserTopicARN = process.env.AWS_SNS_NEW_USER_TOPIC;
 
 exports.listTopics = function(){
 
