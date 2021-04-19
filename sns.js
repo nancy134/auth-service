@@ -20,7 +20,6 @@ exports.newUserEvent = function(userData){
             Message: JSON.stringify(userData),
             TopicArn: newUserTopicARN
         };
-        console.log(params);
         var publishPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
         publishPromise.then(function(data){
             resolve(data);

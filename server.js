@@ -199,14 +199,11 @@ app.get('/playUsers', (req, res) => {
                 email: result.Users[i].Attributes[2].Value,
                 userSub: result.Users[i].Attributes[0].Value 
             };
-            console.log(userData);
             var newUserPromise = sns.newUserEvent(userData);
             promiseArray.push(newUserPromise);
         }
         Promise.all(promiseArray).then((values) => {
-            console.log(values);
         }).catch(function(err){
-            console.log(err);
         });
     }).catch(function(err){
         res.send(err)
