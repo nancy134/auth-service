@@ -61,6 +61,17 @@ exports.confirmSignUp = function(username, code, cognitoClientId){
     return cognitoIdentityServiceProvider.confirmSignUp(params).promise(); 
 }
 
+exports.resendConfirmationCode = function(username, cognitoClientId){
+    var cognitoIdentityServiceProvider = getCognitoIdentityServiceProvider();
+
+    params = {
+      ClientId: cognitoClientId,
+      Username: username
+    };
+
+    return cognitoIdentityServiceProvider.resendConfirmationCode(params).promise();
+}
+
 exports.forgotPassword = function(username, cognitoClientId){
     var cognitoIdentityServiceProvider = getCognitoIdentityServiceProvider();
     var params = {

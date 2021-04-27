@@ -34,6 +34,9 @@ function formatError(err){
         if (err.statusCode) ret.statusCode = err.statusCode;
         else ret.statusCode = 400;
 
+        if (err.code) ret.code = err.code;
+        else ret.code = null;
+
         ret.originalMessage = err;
     } else {
         ret.message = "Unknown error";
@@ -99,6 +102,17 @@ app.post('/confirmSignUp', function(req,res){
     var cognitoClientId = req.body.cognitoClientId;
     var confirmSignUpPromise = cognito.confirmSignUp(username, code, cognitoClientId);
     confirmSignUpPromise.then(function(result) {
+        res.send(result);
+    }).catch(function(err) {
+        var formattedError = formatError(err);
+        res.status(formattedError.statusCode).send(formattedError);
+    });
+});
+
+app.post('/resendConfirmationCode', function(req,res){
+    var username = req.body.username;
+    var cognitoClientId = req.body.cognitoClientId;
+    cognito.resendConfirmationCode(username,cognitoClientId).then(function(result) {
         res.send(result);
     }).catch(function(err) {
         var formattedError = formatError(err);
