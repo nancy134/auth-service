@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const tesla = require('./tesla');
 const vex = require('./vex');
 const sns = require('./sns');
+const cc = require('./constant');
+const url = require('url');
 
 // Constants
 const PORT = 8080;
@@ -225,6 +227,54 @@ app.get('/playUsers', (req, res) => {
     });
 });
 
+app.get('/deleteTestUsers', (req, res) => {
+    var poolId = "us-east-1_kTtaNstIX";
+    var params = {
+        UserPoolId: poolId 
+    };
+    cognito.listUsers(params).then(function(result){
+        res.send('ok');
+        var promiseArray = [];
+        for (var i=0; i<result.Users.length; i++){
+            var email = result.Users[i].Attributes[2].Value;
+            var deletePromise = cognito.deleteUser(poolId, email);
+            promiseArray.push(deletePromise);
+            console.log(email);
+        }
+        Promise.all(promiseArray).then(function(values){
+            console.log(values);
+        }).catch(function(err){
+            console.log(err);
+        });
+    }).catch(function(err){
+        console.log(err);
+    });
+});
+
+app.get('/saDeleteTestUsers', (req, res) => {
+    var poolId = "us-east-1_hTXJ9v5Pr";
+    var params = {
+        UserPoolId: poolId
+    };
+    cognito.listUsers(params).then(function(result){
+        res.send('ok');
+        var promiseArray = [];
+        for (var i=0; i<result.Users.length; i++){
+            var email = result.Users[i].Attributes[2].Value;
+            var deletePromise = cognito.deleteUser(poolId, email);
+            promiseArray.push(deletePromise);
+            console.log(email);
+        }
+        Promise.all(promiseArray).then(function(values){
+            console.log(values);
+        }).catch(function(err){
+            console.log(err);
+        });
+    }).catch(function(err){
+        console.log(err);
+    });
+});
+
 app.get('/deleteUser', (req, res) => {
     var deleteUserPromise = cognito.deleteUser(req.query.userPoolId, req.query.email);
     deleteUserPromise.then(function(result){
@@ -275,5 +325,40 @@ app.post('/vexAuth', function(req, res){
         res.status(400).json(err);
     });
 });
+/////////////////////////////////////////
+// Constant Contact
+/////////////////////////////////////////
+app.get('/cc/auth', function(req, res){
+    var clientId = req.query.clientId;
+    cc.getAuthorizationUrl(clientId).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        res.send(err);
+    });
+});
+
+app.get('/cc/authToken', function(req, res){
+    var code = req.query.code;
+    var redirect_uri = req.query.redirect_uri;
+    var clientId = req.query.clientId;
+    cc.getAccessToken(code, redirect_uri, clientId).then(function(result){
+        res.send(result.data);
+    }).catch(function(err){
+        res.send(err);
+    }); 
+});
+
+app.get('/cc/refreshToken', function(req, res){
+    var query = url.parse(req.url).query;
+    var clientId = req.query.clientId
+    var refresh_token = req.query.refresh_token;
+    var query = "refresh_token=" + refresh_token;
+    cc.refreshToken(query, clientId).then(function(result){
+        res.send(result.data);
+    }).catch(function(err){
+        res.status(400).send(err);
+    });
+});
+
 
 app.listen(PORT, HOST);
