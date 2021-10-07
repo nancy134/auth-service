@@ -8,6 +8,7 @@ const vex = require('./vex');
 const sns = require('./sns');
 const cc = require('./constant');
 const url = require('url');
+const trestle = require('./trestle');
 
 // Constants
 const PORT = 8080;
@@ -360,5 +361,13 @@ app.get('/cc/refreshToken', function(req, res){
     });
 });
 
+app.get('/trestle/auth', function(req, res){
+    trestle.getAccessToken().then(function(result){
+        res.send(result);      
+    }).catch(function(err){
+        console.log(err);
+        res.send(err);
+    });
+});
 
 app.listen(PORT, HOST);
