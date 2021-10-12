@@ -9,6 +9,7 @@ const sns = require('./sns');
 const cc = require('./constant');
 const url = require('url');
 const trestle = require('./trestle');
+const spark = require('./spark');
 
 // Constants
 const PORT = 8080;
@@ -360,6 +361,33 @@ app.get('/cc/refreshToken', function(req, res){
         res.status(400).send(err);
     });
 });
+/////////////////////////////////////
+// Spark
+/////////////////////////////////////
+
+app.get('/spark/authUrl', function(req, res){
+    var clientId = req.query.clientId;
+    spark.getAuthorizationUrl(clientId).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        res.send(err);
+    });
+});
+
+app.post('/spark/authToken', function(req, res){
+    console.log("got to /spark/authToken");
+    console.log(req.body);
+    spark.getAccessToken(req.body).then(function(result){
+        res.send(result.data);
+    }).catch(function(err){
+        console.log(err);
+        res.send(err);
+    });
+});
+
+/////////////////////////////////////
+// Trestle
+////////////////////////////////////
 
 app.get('/trestle/auth', function(req, res){
     trestle.getAccessToken().then(function(result){
