@@ -8,7 +8,7 @@ exports.getAuthorizationUrl = function(clientId){
             baseUrl + 
             "?client_id=" + 
             clientId +
-            "&scope=contact_data+campaign_data&response_type=code" +
+            "&scope=contact_data+campaign_data+account_read&response_type=code" +
             "&redirect_uri=";
 
         resolve(authUrl); 

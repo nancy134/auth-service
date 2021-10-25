@@ -35,7 +35,7 @@ exports.getAccessToken = function(body){
             code: body.code,
             redirect_uri: body.redirect_uri
         };
-        console.log(body);
+        console.log(data);
         var options = {
            url: baseUrl,
            method: 'POST',
