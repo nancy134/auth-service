@@ -48,3 +48,39 @@ exports.getAccessToken = function(body){
         });
     });
 }
+
+exports.refreshAccessToken = function(body){
+    return new Promise(function(resolve, reject){
+        var baseUrl = "https://sparkplatform.com/openid/token";
+        var data = {
+            client_id: body.clientId,
+            client_secret: process.env.SPARK_CLIENT_SECRET,
+            grant_type: "refresh_token",
+            refresh_token: body.refresh_token
+        };
+        console.log(data);
+        var options = {
+           url: baseUrl,
+           method: 'POST',
+           data: data
+        };
+        axios(options).then(function(result){
+            resolve(result);
+        }).catch(function(err){
+            reject(utilities.processAxiosError(err));
+        });
+    });
+}
+
+exports.getLogoutUrl = function(clientId){
+    return new Promise(function(resolve, reject){
+        var baseUrl = "https://sparkplatform.com/openid/logout";
+        var logoutUrl =
+            baseUrl +
+            "?client_id=" +
+            clientId +
+            "&post_logout_redirect_uri=";
+
+        resolve(logoutUrl);
+    });
+}

@@ -10,6 +10,7 @@ const cc = require('./constant');
 const url = require('url');
 const trestle = require('./trestle');
 const spark = require('./spark');
+const cookieParser = require('cookie-parser');
 
 // Constants
 const PORT = 8080;
@@ -17,7 +18,7 @@ const HOST = '0.0.0.0';
 
 // App
 const app = express();
-
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
@@ -398,4 +399,37 @@ app.get('/trestle/auth', function(req, res){
     });
 });
 
+app.post('/spark/refreshToken', function(req, res){
+    spark.refreshAccessToken(req.body).then(function(result){
+        res.send(result.data);
+    }).catch(function(err){
+        console.log(err);
+        res.send(err);
+    });
+});
+
+app.get('/spark/logoutUrl', function(req, res){
+    var clientId = req.query.clientId;
+    spark.getLogoutUrl(clientId).then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        res.send(err);
+    });
+});
+
+app.get('/cookieTest', function (req, res) {
+    // Cookies that have not been signed
+    console.log('Cookies: ', req.cookies)
+  
+    // Cookies that have been signed
+    console.log('Signed Cookies: ', req.signedCookies)
+    res.cookie('test', 'cookievalue', {
+      maxAge: 86400 * 1000, // 24 hours
+      httpOnly: true, // http only, prevents JavaScript cookie access
+      secure: true // cookie must be sent over https / ssl
+    });
+    res.send("cookie test");
+    
+  });
+  
 app.listen(PORT, HOST);
