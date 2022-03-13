@@ -65,7 +65,8 @@ app.post('/signUp', function(req, res) {
         var userData = {
             email: req.body.username,
             userSub: result.UserSub,
-            role: req.body.role
+            role: req.body.role,
+            promoCode: req.body.promoCode
         };
         sns.newUserEvent(userData).then(function(snsResult){
             res.send(result);
