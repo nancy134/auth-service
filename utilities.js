@@ -1,6 +1,8 @@
 exports.processAxiosError = function(error){
     if (error.response){
-        return(error.response.data);
+        var ret = error.response.data;
+        ret.statusCode = error.response.status;
+        return(ret);
     } else if (error.request){
         return(error.request);
     } else {

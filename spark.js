@@ -35,7 +35,6 @@ exports.getAccessToken = function(body){
             code: body.code,
             redirect_uri: body.redirect_uri
         };
-        console.log(data);
         var options = {
            url: baseUrl,
            method: 'POST',
@@ -58,7 +57,6 @@ exports.refreshAccessToken = function(body){
             grant_type: "refresh_token",
             refresh_token: body.refresh_token
         };
-        console.log(data);
         var options = {
            url: baseUrl,
            method: 'POST',
@@ -70,6 +68,21 @@ exports.refreshAccessToken = function(body){
             reject(utilities.processAxiosError(err));
         });
     });
+}
+
+exports.deleteAccessToken = function(token){
+    return new Promise(function(resolve, reject){
+        var url = "https://sparkapi.com/v1/oauth2/token/" + token;
+        var options = {
+            url: url,
+            method: 'DELETE'
+        }
+        axios(options).then(function(result){
+            resolve(result);
+       }).catch(function(err){
+            reject(utilities.processAxiosError(err));
+       });
+    }); 
 }
 
 exports.getLogoutUrl = function(clientId){

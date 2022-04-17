@@ -382,7 +382,14 @@ app.post('/spark/authToken', function(req, res){
     spark.getAccessToken(req.body).then(function(result){
         res.send(result.data);
     }).catch(function(err){
-        console.log(err);
+        res.send(err);
+    });
+});
+
+app.delete('/spark/authToken/:id', function(req, res){
+    spark.deleteAccessToken(req.params.id).then(function(result){
+        res.send(result.data);
+    }).catch(function(err){
         res.send(err);
     });
 });
@@ -405,7 +412,9 @@ app.post('/spark/refreshToken', function(req, res){
         res.send(result.data);
     }).catch(function(err){
         console.log(err);
-        res.send(err);
+        var statusCode = 500;
+        if (err.statusCode) statusCode = err.statusCode;
+        res.status(statusCode).send(err);
     });
 });
 
