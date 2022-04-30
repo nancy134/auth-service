@@ -243,7 +243,6 @@ app.get('/deleteTestUsers', (req, res) => {
             var email = result.Users[i].Attributes[2].Value;
             var deletePromise = cognito.deleteUser(poolId, email);
             promiseArray.push(deletePromise);
-            console.log(email);
         }
         Promise.all(promiseArray).then(function(values){
             console.log(values);
@@ -348,7 +347,11 @@ app.get('/cc/authToken', function(req, res){
     cc.getAccessToken(code, redirect_uri, clientId).then(function(result){
         res.send(result.data);
     }).catch(function(err){
-        res.send(err);
+        if (err.statusCode){
+            res.status(err.statusCode).send(err);
+        }else{
+            res.status(400).send(err);
+        }
     }); 
 });
 
@@ -360,7 +363,11 @@ app.get('/cc/refreshToken', function(req, res){
     cc.refreshToken(query, clientId).then(function(result){
         res.send(result.data);
     }).catch(function(err){
-        res.status(400).send(err);
+        if (err.statusCode){
+            res.status(err.statusCode).send(err);
+        }else{
+            res.status(400).send(err);
+        }
     });
 });
 /////////////////////////////////////
@@ -377,8 +384,6 @@ app.get('/spark/authUrl', function(req, res){
 });
 
 app.post('/spark/authToken', function(req, res){
-    console.log("got to /spark/authToken");
-    console.log(req.body);
     spark.getAccessToken(req.body).then(function(result){
         res.send(result.data);
     }).catch(function(err){
