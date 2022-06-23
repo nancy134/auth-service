@@ -11,6 +11,7 @@ const url = require('url');
 const trestle = require('./trestle');
 const spark = require('./spark');
 const cookieParser = require('cookie-parser');
+const google = require('./google');
 
 // Constants
 const PORT = 8080;
@@ -429,6 +430,20 @@ app.get('/spark/logoutUrl', function(req, res){
         res.send(result);
     }).catch(function(err){
         res.send(err);
+    });
+});
+
+///////////////////////////////////////////////
+// Google
+///////////////////////////////////////////////
+
+app.post('/google/auth', function(req, res){
+    google.getTokens(req.body.code).then(function(tokens){
+        res.send(tokens);
+    }).catch(function(err){
+        var statusCode = 500;
+        if (err.statusCode) statusCode = err.statusCode;
+        res.status(statusCode).send(err);
     });
 });
 
