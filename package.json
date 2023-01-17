@@ -17,7 +17,8 @@
     "express": "^4.17.1",
     "google-auth-library": "^8.0.2",
     "request": "^2.88.0",
-    "request-promise": "^4.2.5"
+    "request-promise": "^4.2.5",
+    "smartcar": "^9.2.0"
   },
   "devDependencies": {
     "aws-sdk-mock": "^5.4.0",

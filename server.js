@@ -12,6 +12,7 @@ const trestle = require('./trestle');
 const spark = require('./spark');
 const cookieParser = require('cookie-parser');
 const google = require('./google');
+const smartcar = require('./smartcar');
 
 // Constants
 const PORT = 8080;
@@ -441,6 +442,40 @@ app.post('/google/auth', function(req, res){
     google.getTokens(req.body.code).then(function(tokens){
         res.send(tokens);
     }).catch(function(err){
+        var statusCode = 500;
+        if (err.statusCode) statusCode = err.statusCode;
+        res.status(statusCode).send(err);
+    });
+});
+
+////////////////////////////////////////////////
+// SmartCar
+////////////////////////////////////////////////
+
+app.post('/smartcar/auth', function(req, res){
+    smartcar.getTokens(req.body.code).then(function(tokens){
+        res.send(tokens);
+    }).catch(function(err){
+        console.log(err);
+        var statusCode = 500;
+        if (err.statusCode) statusCode = err.statusCode;
+        res.status(statusCode).send(err);
+    });
+});
+
+app.get('/smartcar/authUrl', function(req, res){
+    smartcar.getAuthorizationUrl().then(function(result){
+        res.send(result);
+    }).catch(function(err){
+        res.send(err);
+    });
+});
+
+app.post('/smartcar/refreshToken', function(req, res){
+    smartcar.refreshAccessToken(req.body).then(function(result){
+        res.send(result.data);
+    }).catch(function(err){
+        console.log(err);
         var statusCode = 500;
         if (err.statusCode) statusCode = err.statusCode;
         res.status(statusCode).send(err);
