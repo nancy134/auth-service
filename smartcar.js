@@ -28,8 +28,9 @@ exports.getAuthorizationUrl = function(){
         baseUrl +
         "response_type=code" +
         "&client_id=" + client.clientId +
-        "&scope=read_odometer read_vehicle_info read_vin read_battery read_odometer read_tires read_fuel required:read_location" +        "&state=0facda3q3q3q3q19" +
-
+        "&scope=read_odometer read_vehicle_info read_vin read_battery read_odometer read_tires read_fuel read_charge required:read_location" +
+        "&state=0facda3q3q3q3q19" +
+        
         "&redirect_uri=" + client.redirectUri +
         "&mode=test"
 
