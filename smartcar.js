@@ -35,7 +35,8 @@ exports.getAuthorizationUrl = function(){
 		"read_tires " +
 		"read_fuel " +
 		"read_charge " +
-		"control_charge " +
+        "control_charge " +
+        "control_security " +
 		"required:read_location" +
         "&state=0facda3q3q3q3q19" +
 
