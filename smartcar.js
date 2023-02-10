@@ -37,9 +37,10 @@ exports.getAuthorizationUrl = function(){
 		"read_charge " +
         "control_charge " +
         "control_security " +
+        "control_security " +
+        "read_engine_oil " +
 		"required:read_location" +
         "&state=0facda3q3q3q3q19" +
-
         "&redirect_uri=" + client.redirectUri +
         "&mode=test"
 
@@ -73,4 +74,5 @@ exports.refreshAccessToken = function(body){
         });
     });
 }
+
 
