@@ -43,7 +43,8 @@ exports.getAuthorizationUrl = function(){
 		"required:read_location" +
         "&state=0facda3q3q3q3q19" +
         "&redirect_uri=" + client.redirectUri +
-        "&mode=test"
+        "&mode=" + process.env.SMARTCAR_MODE
+
 
         resolve(authUrl);
     });
