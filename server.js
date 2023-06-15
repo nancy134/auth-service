@@ -64,12 +64,17 @@ app.post('/signUp', function(req, res) {
     var cognitoClientId = req.body.cognitoClientId;
     var signUpPromise = cognito.signUp(username, password,cognitoClientId);
     signUpPromise.then(function(result){
-        var userData = {
-            email: req.body.username,
-            userSub: result.UserSub,
-            role: req.body.role,
-            promoCode: req.body.promoCode
-        };
+        var userData = {};
+        if (req.body.username) userData.email = req.body.username;
+        if (result.UserSub) userData.userSub = result.UserSub;
+        if (req.body.role) userData.role = req.body.role;
+        if (req.body.promoCode) userData.promoCode = req.body.promoCode;
+        if (req.body.accessToken) userData.accessToken = req.body.accessToken;
+        if (req.body.refreshToken) userData.refreshToken = req.body.refreshToken;
+        if (req.body.expiration) userData.expiration = req.body.expiration;
+        if (req.body.refreshExpiration) userData.refreshExpiration = req.body.refreshExpiration
+        
+
         sns.newUserEvent(userData).then(function(snsResult){
             res.send(result);
         }).catch(function(err){
