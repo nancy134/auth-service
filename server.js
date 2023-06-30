@@ -72,9 +72,10 @@ app.post('/signUp', function(req, res) {
         if (req.body.accessToken) userData.accessToken = req.body.accessToken;
         if (req.body.refreshToken) userData.refreshToken = req.body.refreshToken;
         if (req.body.expiration) userData.expiration = req.body.expiration;
-        if (req.body.refreshExpiration) userData.refreshExpiration = req.body.refreshExpiration
-        
+        if (req.body.refreshExpiration) userData.refreshExpiration = req.body.refreshExpiration;
+        if (req.body.smartcarId) userData.smartcarId = req.body.smartcarId;        
 
+        console.log(userData);
         sns.newUserEvent(userData).then(function(snsResult){
             res.send(result);
         }).catch(function(err){
